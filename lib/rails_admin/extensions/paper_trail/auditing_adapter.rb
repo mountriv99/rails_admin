@@ -1,10 +1,10 @@
+# EC 130903 - removed @user_class, displays whodunnit as is
 module RailsAdmin
   module Extensions
     module PaperTrail
       class VersionProxy
-        def initialize(version, user_class = User)
+        def initialize(version, user_class = nil)
           @version = version
-          @user_class = user_class
         end
 
         def message
@@ -21,7 +21,7 @@ module RailsAdmin
         end
 
         def username
-          @user_class.find_by_id(@version.whodunnit).try(:email) || @version.whodunnit
+					@version.whodunnit
         end
 
         def item
@@ -38,14 +38,13 @@ module RailsAdmin
           :message => :event
         }
 
-        def initialize(controller, user_class = User)
+        def initialize(controller, user_class = nil)
           raise "PaperTrail not found" unless defined?(PaperTrail)
           @controller = controller
-          @user_class = user_class.to_s.constantize
         end
 
         def latest
-          ::Version.limit(100).map{|version| VersionProxy.new(version, @user_class)}
+          ::Version.limit(100).map{|version| VersionProxy.new(version)}
         end
 
         def delete_object(object, model, user)
@@ -71,7 +70,7 @@ module RailsAdmin
           versions = versions.where("event LIKE ?", "%#{query}%") if query.present?
           versions = versions.order(sort_reverse == "true" ? "#{sort} DESC" : sort)
           versions = all ? versions : versions.send(Kaminari.config.page_method_name, page.presence || "1").per(per_page)
-          versions.map{|version| VersionProxy.new(version, @user_class)}
+          versions.map{|version| VersionProxy.new(version)}
         end
 
         def listing_for_object(model, object, query, sort, sort_reverse, all, page, per_page = (RailsAdmin::Config.default_items_per_page || 20))
@@ -85,7 +84,7 @@ module RailsAdmin
           versions = versions.where("event LIKE ?", "%#{query}%") if query.present?
           versions = versions.order(sort_reverse == "true" ? "#{sort} DESC" : sort)
           versions = all ? versions : versions.send(Kaminari.config.page_method_name, page.presence || "1").per(per_page)
-          versions.map{|version| VersionProxy.new(version, @user_class)}
+          versions.map{|version| VersionProxy.new(version)}
         end
       end
     end
