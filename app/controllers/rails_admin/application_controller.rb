@@ -55,7 +55,7 @@ module RailsAdmin
       instance_eval &RailsAdmin::Config.current_user_method
     end
 
-    alias_method :user_for_paper_trail, :_current_user
+    # alias_method :user_for_paper_trail, :_current_user
 
     rescue_from RailsAdmin::ObjectNotFound do
       flash[:error] = I18n.t('admin.flash.object_not_found', :model => @model_name, :id => params[:id])
