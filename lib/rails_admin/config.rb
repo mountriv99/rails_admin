@@ -26,6 +26,9 @@ module RailsAdmin
 
 
     class << self
+      # Base Controller for RailsAdmin::ApplcationController to inherit from, default is ::ApplicationController (EC 130904)
+      attr_accessor :base_controller
+
       # Application title, can be an array of two elements
       attr_accessor :main_app_name
 
